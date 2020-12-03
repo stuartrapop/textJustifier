@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 // create a staic directory for serving page with instructions for using the API
 app.use(express.static('./public'));
 
-// add router
+// router for all non static endpoint delivery
 const router = require('./app/router');
 
 app.use(router);
