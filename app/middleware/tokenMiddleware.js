@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const client = require('../database');
 
 const tokenMiddleware = {
-
+  // pass if valid jwt
   checkValidToken: (req, res, next) => {
     const { token } = req.query;
     jwt.verify(token, process.env.TOKENSECRET, (err, decoded) => {
@@ -14,26 +14,27 @@ const tokenMiddleware = {
       }
     });
   },
-
+  // check if sufficient credit. Updated words_justified value in token table if available credit
+  // otherwise send message
   tokentUpdateAndCheck: async (req, res, next) => {
     try {
       const { token } = req.query;
       const receivedText = req.body.text;
       const numWords = receivedText.split(' ').length;
-      const selectQuery = `SELECT * FROM token WHERE token =  '${token}'`;
-      const selectResponse = await client.query(selectQuery);
+      const selectQuery = 'SELECT * FROM token WHERE token =  $1';
+      const selectResponse = await client.query(selectQuery, [`${token}`]);
 
       if (!selectResponse.rows[0]) {
         throw Error;
-      } else if ((selectResponse.rows[0].words_justified + numWords) > 4000) {
+      } else if ((selectResponse.rows[0].words_justified + numWords) > 80000) {
         res.status(402).send({
           message: 'Payment Required - we want bitcoins',
         });
       } else {
-        const updateQuery = `UPDATE token SET words_justified = ${selectResponse.rows[0].words_justified + numWords} `;
-        const updateResponse = await client.query(updateQuery);
+        const updateQuery = `UPDATE token SET words_justified = ${selectResponse.rows[0].words_justified + numWords} WHERE token =  $1`;
+        const updateResponse = await client.query(updateQuery, [`${token}`]);
 
-        // for testing
+        // for initial debugging
         /*   res.send({
           selectResponse: selectResponse.rows[0],
           selectQuery,

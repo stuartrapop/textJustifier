@@ -1,4 +1,6 @@
 const justifyController = {
+  // for learing mocha/chai
+  sayHello: () => 'hello',
 
   /* build an 80 character line
     1)add spaces equally between words as possible. Longer spaces at the beginning of sentence.
@@ -20,13 +22,14 @@ const justifyController = {
         if (extraSpaces > 0) {
           const spacesToAdd = Math.ceil(extraSpaces
             / (lineInfo.numberWords - stringWordCounter - 1));
-          console.log('extraSpaces, spacesToAdd, (lineInfo - stringWordCounter) ', extraSpaces, spacesToAdd, (lineInfo.numberWords - stringWordCounter));
+          /*  console.log('extraSpaces, spacesToAdd, (lineInfo - stringWordCounter) ',
+            extraSpaces, spacesToAdd, (lineInfo.numberWords - stringWordCounter)); */
           lineString = lineString.padEnd(lineString.length + spacesToAdd, ' ');
           extraSpaces -= spacesToAdd;
         }
       }
     }
-    console.log('line length', lineString.length);
+    //  console.log('line length', lineString.length);
 
     return lineString;
   },
